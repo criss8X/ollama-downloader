@@ -1,7 +1,6 @@
 import json
-import time
 import subprocess
-from utils import sum_size, foreach, divide_list, gb_size, percent_of, ollama_installed
+from utils import sum_size, foreach, divide_list, gb_size, percent_of, ollama_installed, _run_cmd
 from rich.text import Text
 from rich.console import Console
 from welcome import init_welcome
@@ -30,7 +29,7 @@ class Downloader:
 
         for model in chunk:
             self.update(model=model, chunk=chunk)
-            time.sleep(1)
+            _run_cmd(["ollama", "pull", model["name"]])
 
             self.complete_download(model)
             self.clear_console()
