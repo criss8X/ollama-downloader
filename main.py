@@ -1,40 +1,86 @@
 import json
-from console import update_models
 import time
-from subprocess import run
-import utils as utils
+import subprocess
+from utils import sum_size, foreach, divide_list, gb_size, percent_of, ollama_installed
+from rich.text import Text
+from rich.console import Console
+from welcome import init_welcome
 
-def download_chunk(models, chunk_size, total_size, downloaded_size):
-    run("clear")
+class Downloader:
+    def __init__(self, models):
+        self.models = models
+        self.total_size = sum_size(models)
+        self.downloaded = []
+        self.downloaded_size = 0.00
+        self.console = Console()
+
+    def init_download(self):
+        chunks = divide_list(self.models)
+        foreach(chunks, self.download_chunk)
+
+    def clear_console(self):
+        subprocess.run("clear")
+
+    def complete_download(self, model):
+        self.downloaded.append(model["name"])
+        self.downloaded_size += gb_size(model["size"])
+
+    def download_chunk(self, chunk):
+        self.clear_console()
+
+        for model in chunk:
+            self.update(model=model, chunk=chunk)
+            time.sleep(1)
+
+            self.complete_download(model)
+            self.clear_console()
+
+    def print(self, objects):
+        self.console.print(*objects)
+
+    def update(self, model, chunk):
+        # Print header with info about size.
+        chunk_size = Text(text=f"{round(self.downloaded_size, 2)}GB", style="blue")
+        size_sep = Text(text="of", style="bold")
+        total_size = Text(text=f"{self.total_size}GB", style="blue")
+
+        percent = Text(text=f"({percent_of(self.downloaded_size, self.total_size)}%)", style="blue bold")
+
+        self.print(["Downloaded size:", chunk_size, size_sep, total_size, percent])
+        self.print("")
+
+        foreach(chunk, lambda model_of_chunk: self.update_model_of_chunk(model_of_chunk, model))
+
     
-    downloaded = []
-    for model in models:
-        update_models(models, model, downloaded, chunk_size, total_size, downloaded_size)
-        time.sleep(1)
+    def update_model_of_chunk(self, model_of_chunk, current_model):
+        model_row = [
+            Text(text=f"·", style=""), 
+            Text(text=model_of_chunk["name"], style="bold"), 
+            Text(text=model_of_chunk["size"], style="bold blue")
+        ]
+        
+        if current_model["name"] == model_of_chunk["name"]:
+            model_row.append(Text(text="|-> Downloading...", style="italic"))
+        elif self.downloaded.__contains__(model_of_chunk["name"]):
+            model_row.append(Text(text="(Completed!)", style="blue bold"))
 
-        downloaded.append(model["name"])
-        run("clear")
-
-
-def divide_list(list, size=5):
-    return [list[i:i + size] for i in range(0, len(list), size)]
+        self.print(model_row)
 
 
 def main():
+    installed = ollama_installed()
+
+    if not installed:
+        print("Please, install ollama before run this script.")
+        return
+
     with open("ollama-data.json", "r", encoding="utf-8") as file:
         data = json.load(file)
         models = data["models"]
-        chunks = divide_list(models)
-
-        downloaded_size = 0.00
-        total_size = utils.total_size(models)
-
-        for chunk in chunks:
-            chunk_size = utils.total_size(chunk)
-            download_chunk(chunk, chunk_size, total_size, downloaded_size)
-
-            downloaded_size += chunk_size
+       
+        Downloader(models).init_download()
 
 
 if __name__ == "__main__":
+    init_welcome()
     main()

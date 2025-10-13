@@ -31,21 +31,35 @@ def gb_size(size):
     else:
         raise ValueError("Invalid format.") 
 
-def total_size(models):
+def percent_of(part, total):
+    return round(part / total * 100, 2)
+
+def sum_size(models):
     return round(sum(map(lambda model: gb_size(model["size"]),models)), 2)
 
-def join(list: list, sep):
-    result = ""
+def divide_list(list, size=5):
+    return [list[i:i + size] for i in range(0, len(list), size)]
 
-    for item in list:
-        result += f"{item}{sep}"
-    
-    return result
 
-def flatten(biglist: list):
-    list = []
+def foreach(iterable: list, fn: lambda item: (item)):
+    for item in iterable:
+        fn(item)
 
-    for item in biglist:
-        for subitem in item:
-            list.append(subitem)
-    return list
+import shutil
+
+def ollama_installed() -> bool:
+    path = shutil.which("ollama")
+
+    if not path:
+        return False
+
+    try:
+        subprocess.run(
+            ["ollama", "--version"],
+            capture_output=True,
+            check=True
+        )
+
+        return True
+    except:
+        return False
