@@ -68,12 +68,6 @@ class Downloader:
 
 
 def main():
-    installed = ollama_installed()
-
-    if not installed:
-        print("Please, install ollama before run this script.")
-        return
-
     with open("ollama-data.json", "r", encoding="utf-8") as file:
         data = json.load(file)
         models = data["models"]
@@ -82,5 +76,10 @@ def main():
 
 
 if __name__ == "__main__":
-    init_welcome()
-    main()
+    installed = ollama_installed()
+
+    if not installed:
+        print("Please, install ollama before run this script.")
+    else:
+        init_welcome()
+        main()
