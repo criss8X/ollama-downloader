@@ -1,0 +1,26 @@
+name: Build EXE
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Package Application (Windows EXE)
+        uses: JackMcKew/pyinstaller-action-windows@main 
+        with:
+          path: src
+          
+      - name: Upload Windows Executable Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-executable-${{ github.ref_name }} 
+          path: dist/
+          retention-days: 90
