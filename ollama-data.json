@@ -1,8 +1,4 @@
 {
-    "script-to-download": "ollama pull",
-    "ollama-install": {
-        "linux": "curl -fsSL https://ollama.com/install.sh | sh"
-    },
     "models": [
         {
             "name": "deepseek-r1:8b",
@@ -67,94 +63,6 @@
         {
             "name": "qwen2.5-coder:32b",
             "size": "20GB"
-        },
-        {
-            "name": "gemma:7b",
-            "size": "5.0GB"
-        },
-        {
-            "name": "qwq:32b",
-            "size": "20GB"
-        },
-        {
-            "name": "codegemma:7b",
-            "size": "5.0GB"
-        },
-        {
-            "name": "codegemma:2b",
-            "size": "1.6GB"
-        },
-        {
-            "name": "deepseek-coder-v2:16b",
-            "size": "8.9GB"
-        },
-        {
-            "name": "falcon3:10b",
-            "size": "6.3GB"
-        },
-        {
-            "name": "falcon3:1b",
-            "size": "1.8GB"
-        },
-        {
-            "name": "gemma3n:e4b",
-            "size": "7.5GB"
-        },
-        {
-            "name": "qwen3-coder:30b",
-            "size": "19GB"
-        },
-        {
-            "name": "smollm:135m",
-            "size": "92MB"
-        },
-        {
-            "name": "smollm:1.7b",
-            "size": "991MB"
-        },
-        {
-            "name": "deepcoder:14b",
-            "size": "9.0GB"
-        },
-        {
-            "name": "deepcoder:1.5b",
-            "size": "1.1GB"
-        },
-        {
-            "name": "granite-code:3b",
-            "size": "2.0GB"
-        },
-        {
-            "name": "starcoder:1b",
-            "size": "726MB"
-        },
-        {
-            "name": "starcoder:3b",
-            "size": "1.8GB"
-        },
-        {
-            "name": "starcoder:7b",
-            "size": "4.3GB"
-        },
-        {
-            "name": "starcoder:15b",
-            "size": "9.0GB"
-        },
-        {
-            "name": "codegeex4:9b",
-            "size": "5.5GB"
-        },
-        {
-            "name": "codeqwen:7b",
-            "size": "4.2GB"
-        },
-        {
-            "name": "qwen2-math:1.5b",
-            "size": "935MB"
-        },
-        {
-            "name": "qwen2-math:7b",
-            "size": "4.4GB"
         }
     ]
 }
