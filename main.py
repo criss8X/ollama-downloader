@@ -1,9 +1,6 @@
 import json
 import subprocess
 from utils import sum_size, foreach, divide_list, gb_size, percent_of, ollama_installed, _run_cmd
-from rich.text import Text
-from rich.console import Console
-from welcome import init_welcome
 
 class Downloader:
     def __init__(self, models):
@@ -11,7 +8,6 @@ class Downloader:
         self.total_size = sum_size(models)
         self.downloaded = []
         self.downloaded_size = 0.00
-        self.console = Console()
 
     def init_download(self):
         chunks = divide_list(self.models)
@@ -34,36 +30,27 @@ class Downloader:
             self.complete_download(model)
             self.clear_console()
 
-    def print(self, objects):
-        self.console.print(*objects)
 
     def update(self, model, chunk):
         # Print header with info about size.
-        chunk_size = Text(text=f"{round(self.downloaded_size, 2)}GB", style="blue")
-        size_sep = Text(text="of", style="bold")
-        total_size = Text(text=f"{self.total_size}GB", style="blue")
+        chunk_size = f"{round(self.downloaded_size, 2)}GB of {self.total_size}GB"
+        percent = f"({percent_of(self.downloaded_size, self.total_size)}%)"
 
-        percent = Text(text=f"({percent_of(self.downloaded_size, self.total_size)}%)", style="blue bold")
-
-        self.print(["Downloaded size:", chunk_size, size_sep, total_size, percent])
-        self.print("")
+        print(f"Downloaded size: {chunk_size} {percent}")
+        print("")
 
         foreach(chunk, lambda model_of_chunk: self.update_model_of_chunk(model_of_chunk, model))
 
     
     def update_model_of_chunk(self, model_of_chunk, current_model):
-        model_row = [
-            Text(text=f"·", style=""), 
-            Text(text=model_of_chunk["name"], style="bold"), 
-            Text(text=model_of_chunk["size"], style="bold blue")
-        ]
+        model_row = f"· {model_of_chunk['name']} {model_of_chunk['size']}"
         
         if current_model["name"] == model_of_chunk["name"]:
-            model_row.append(Text(text="|-> Downloading...", style="italic"))
+            model_row += "|-> Downloading..."
         elif self.downloaded.__contains__(model_of_chunk["name"]):
-            model_row.append(Text(text="(Completed!)", style="blue bold"))
+            model_row += "(Completed!)"
 
-        self.print(model_row)
+        print(model_row)
 
 
 def main():
@@ -80,5 +67,4 @@ if __name__ == "__main__":
     if not installed:
         print("Please, install ollama before run this script.")
     else:
-        init_welcome()
         main()
